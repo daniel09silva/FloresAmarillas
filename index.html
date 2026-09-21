@@ -6,8 +6,10 @@
 <title>Viaje de flores amarillas</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  html, body { margin: 0; height: 100%; background: #05040a; display: flex; align-items: center; justify-content: center; font-family: 'Quicksand', sans-serif; }
+  html, body { margin: 0; height: 100%; background: #05040a; font-family: 'Quicksand', sans-serif; }
+  body { display: flex; align-items: center; justify-content: center; overflow: hidden; height: 100dvh; }
   button { font: inherit; }
+  .card-scale { transform-origin: center center; }
 
   .star-a { animation: twinkleA 3.2s ease-in-out infinite; }
   .star-b { animation: twinkleB 4.1s ease-in-out infinite; }
@@ -112,29 +114,49 @@
     else { audio.pause(); setMusicIcon(false); }
   }
 
-  window.addEventListener('load', function () {
-    var audio = document.getElementById('bgMusic');
-    audio.muted = true;
-    var p = audio.play();
-    if (p !== undefined) { p.catch(function () {}); }
-    setMusicIcon(true);
+  function fitCard() {
+    var card = document.querySelector('.card-scale');
+    var scale = Math.min(1, window.innerWidth / 500, (window.visualViewport ? window.visualViewport.height : window.innerHeight) / 850);
+    card.style.transform = 'scale(' + scale + ')';
+  }
+  window.addEventListener('resize', fitCard);
+  if (window.visualViewport) window.visualViewport.addEventListener('resize', fitCard);
+  fitCard();
 
-    var unmuteOnce = function () {
-      audio.muted = false;
-      if (audio.paused) { audio.play().catch(function () {}); }
-      document.removeEventListener('click', unmuteOnce);
-      document.removeEventListener('touchstart', unmuteOnce);
-      document.removeEventListener('keydown', unmuteOnce);
-    };
-    document.addEventListener('click', unmuteOnce);
-    document.addEventListener('touchstart', unmuteOnce);
-    document.addEventListener('keydown', unmuteOnce);
-  });
+  function startMusic() {
+    var audio = document.getElementById('bgMusic');
+    audio.muted = false;
+    var p = audio.play();
+    if (p !== undefined) {
+      p.then(function () { setMusicIcon(true); }).catch(function () {
+        audio.muted = true;
+        audio.play().catch(function () {});
+        setMusicIcon(true);
+        var unmuteOnce = function () {
+          audio.muted = false;
+          if (audio.paused) { audio.play().catch(function () {}); }
+          document.removeEventListener('click', unmuteOnce);
+          document.removeEventListener('touchstart', unmuteOnce);
+          document.removeEventListener('keydown', unmuteOnce);
+          document.removeEventListener('pointerdown', unmuteOnce);
+          document.removeEventListener('scroll', unmuteOnce);
+        };
+        document.addEventListener('click', unmuteOnce);
+        document.addEventListener('touchstart', unmuteOnce);
+        document.addEventListener('keydown', unmuteOnce);
+        document.addEventListener('pointerdown', unmuteOnce);
+        document.addEventListener('scroll', unmuteOnce);
+      });
+    } else {
+      setMusicIcon(true);
+    }
+  }
+  window.addEventListener('load', startMusic);
 </script>
 </head>
 <body>
 
-<div style="width: 500px; height: 850px; max-width: 100vw; max-height: 100vh; box-sizing: border-box; position: relative; overflow: hidden; background: #0B0A12; border-radius: 28px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.5);">
+<div class="card-scale" style="width: 500px; height: 850px; box-sizing: border-box; position: relative; overflow: hidden; background: #0B0A12; border-radius: 28px; box-shadow: 0 24px 60px -20px rgba(0,0,0,.5); flex-shrink: 0;">
 
   <audio id="bgMusic" src="floresamarillas.mp3" loop autoplay></audio>
 
