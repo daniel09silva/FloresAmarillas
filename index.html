@@ -107,23 +107,28 @@
 
   function toggleMusic() {
     var audio = document.getElementById('bgMusic');
+    audio.muted = false;
     if (audio.paused) { audio.play(); setMusicIcon(true); }
     else { audio.pause(); setMusicIcon(false); }
   }
 
   window.addEventListener('load', function () {
     var audio = document.getElementById('bgMusic');
+    audio.muted = true;
     var p = audio.play();
-    if (p !== undefined) {
-      p.then(function () { setMusicIcon(true); }).catch(function () {
-        setMusicIcon(false);
-        var startOnce = function () {
-          audio.play().then(function () { setMusicIcon(true); });
-          document.removeEventListener('click', startOnce);
-        };
-        document.addEventListener('click', startOnce);
-      });
-    }
+    if (p !== undefined) { p.catch(function () {}); }
+    setMusicIcon(true);
+
+    var unmuteOnce = function () {
+      audio.muted = false;
+      if (audio.paused) { audio.play().catch(function () {}); }
+      document.removeEventListener('click', unmuteOnce);
+      document.removeEventListener('touchstart', unmuteOnce);
+      document.removeEventListener('keydown', unmuteOnce);
+    };
+    document.addEventListener('click', unmuteOnce);
+    document.addEventListener('touchstart', unmuteOnce);
+    document.addEventListener('keydown', unmuteOnce);
   });
 </script>
 </head>
@@ -341,10 +346,10 @@
       <img src="123456.jpg" alt="Foto de nosotros" style="display: block; width: 160px; aspect-ratio: 160 / 210; object-fit: cover; object-position: 50% 15%; border-radius: 12px; border: 2px solid rgba(180,83,9,.5); margin: 16px auto 0;">
 
       <div style="font-family: 'Playfair Display', serif; font-size: 16.5px; line-height: 1.75; color: #3A2E1F; margin-top: 18px;">
-        <p style="margin: 0 0 14px;">Feliz día de las flores amarillas, quiero decirte lo que a veces las palabras no alcanzan a expresar: lo mucho que significas para mí.</p>
-        <p style="margin: 0 0 14px;">Contigo cada día se siente más liviano, más bonito, más nuestro. gracias por tu risa, por tu paciencia, por elegirme y dejarme elegirte cada día.</p>
-        <p style="margin: 0 0 14px;">Me encanta la forma en que eres, ese carácter tuyo, tu forma de ser completamente me enamora.</p>
-        <p style="margin: 0;">Que estas flores amarillas te recuerden siempre lo brillante que eres y lo mucho que te quiero. Te amo, mi amor, corazón 💛</p>
+        <p style="margin: 0 0 14px;">Feliz día de las flores amarillas, quiero decirte lo que a veces las palabras no alcanzan a expresar, lo mucho que significas para mí</p>
+        <p style="margin: 0 0 14px;">contigo cada día se siente más liviano, más bonito, más nuestro, gracias por tu risa, por tu paciencia, por elegirme y dejarme elegirte cada día</p>
+        <p style="margin: 0 0 14px;">me encanta la forma en que eres, ese carácter tuyo, tu forma de ser completamente me enamora</p>
+        <p style="margin: 0;">que estas flores amarillas te recuerden siempre lo brillante que eres y lo mucho que te quiero, te amo, mi amor, corazón 💛 espero que te haya gustado amor</p>
       </div>
       </div>
     </div>
