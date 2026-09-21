@@ -109,19 +109,24 @@
 
   function toggleMusic() {
     var audio = document.getElementById('bgMusic');
-    audio.muted = false;
-    if (audio.paused) { audio.play(); setMusicIcon(true); }
-    else { audio.pause(); setMusicIcon(false); }
+    if (audio.paused || audio.muted) {
+      audio.muted = false;
+      audio.play();
+      setMusicIcon(true);
+    } else {
+      audio.pause();
+      setMusicIcon(false);
+    }
   }
 
   function fitCard() {
     var card = document.querySelector('.card-scale');
+    if (!card) return;
     var scale = Math.min(1, window.innerWidth / 500, (window.visualViewport ? window.visualViewport.height : window.innerHeight) / 850);
     card.style.transform = 'scale(' + scale + ')';
   }
   window.addEventListener('resize', fitCard);
   if (window.visualViewport) window.visualViewport.addEventListener('resize', fitCard);
-  fitCard();
 
   function startMusic() {
     var audio = document.getElementById('bgMusic');
@@ -151,7 +156,10 @@
       setMusicIcon(true);
     }
   }
-  window.addEventListener('load', startMusic);
+  window.addEventListener('DOMContentLoaded', function () {
+    fitCard();
+    startMusic();
+  });
 </script>
 </head>
 <body>
